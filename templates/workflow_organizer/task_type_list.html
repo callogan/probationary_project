@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Managing of tasks {% endblock %}
+
+{% block content %}
+
+{% include "includes/sidebar.html" %}
+
+  <div class="row">
+    <header>
+      <div class="page-header min-height-300">
+        <span class="mask bg-gradient-info opacity-6"></span>
+      </div>
+    </header>
+    <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6 mb-4">
+      <section class="py-sm-7 py-5 position-relative">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 mx-auto">
+              <div style="float: right" class="mt-n6">
+                {% include "includes/search_form.html" %}
+              </div>
+              <br><br>
+              <div class="row py-5">
+                <div class="col-lg-7 col-md-7 z-index-2 position-relative px-md-2 px-sm-5 mx-auto mb-4">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-4">Task Types</h2>
+                    <div class="row">
+                      <a style="width: 40px; height: 40px; box-shadow: 0 0.3125rem 0.625rem 0 rgba(51, 153, 255, 0.32)" href="{% url 'workflow_organizer:task-type-create' %}" class="btn btn-white mx-3">
+{#                      filler#}
+                      </a>
+                    </div>
+                  </div>
+                  <br>
+                  {% if task_type_list %}
+                    {% for task_type in task_type_list %}
+                      <div style="width:100%; box-shadow: 0 0.3125rem 0.625rem 0 rgba(51, 153, 255, 0.32)" class="card mb-3">
+                        <div class="card-body">
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div class="card-title"><h5><i>#{{ task_type.name }}</i></h5></div>
+                            <div class="row">
+                              <a style="width: 40px; height: 40px; box-shadow: 0 0.3125rem 0.625rem 0 rgba(51, 153, 255, 0.32)" href="{% url 'workflow_organizer:task-type-update' pk=task_type.id %}" class="btn btn-white mx-3">
+{#                              filler#}
+                              </a>
+                              <a style="width: 40px; height: 40px; box-shadow: 0 0.3125rem 0.625rem 0 rgba(51, 153, 255, 0.32)" href="{% url 'workflow_organizer:task-type-delete' pk=task_type.id %}" class="btn btn-white mx-3">
+{#                              filler#}
+                              </a>
+                            </div>
+                          </div>
+                          <div class="card-text"><p class="text-sm">{{ task_type.depiction }}</p></div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  {% else %}
+                    <p>There are no task types yet!</p>
+                  {% endif %}
+                  {% include 'includes/pagination.html' %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+{% endblock content %}

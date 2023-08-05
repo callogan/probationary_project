@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} {{ project.name }} {% endblock %}
+
+{% block content %}
+
+{% include "includes/sidebar.html" %}
+
+  <div class="row">
+    <header>
+{#      Filler#}
+    </header>
+
+    <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6 mb-4">
+      <section class="py-sm-7 py-5 position-relative">
+        <div class="container mt-10">
+          <div class="row">
+            <div class="col-12 mx-auto">
+              <div class="col-lg-9 col-md-9 z-index-2 position-relative px-md-1 px-sm-5 mx-auto mb-2">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h3 class="mb-2">{{ project.name }}</h3>
+                  {% if user.is_authenticated %}
+                    <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown button
+                      </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <a class="dropdown-item py-2 ps-3 border-radius-md" target="_blank" href="{% url 'workflow_organizer:project-update' pk=project.id %}">
+                            <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-center align-items-center p-0">Edit project</h6>
+                          </a>
+                          <a class="dropdown-item py-2 ps-3 border-radius-md" target="_blank" href="{% url 'workflow_organizer:project-delete' pk=project.id %}">
+                            <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-center align-items-center p-0">Delete project</h6>
+                          </a>
+                        </div>
+                       </div>
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+                  <table class="mx-n2 table table-borderless">
+                    <thead>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="text-muted"><i>Completion</i></td>
+                        <td>
+                          <div class="progress-wrapper">
+                            <div class="progress-info">
+                              <div class="progress-percentage">
+                                <span class="text-xs text-muted font-weight-bold">{{ project.progress }}%</span>
+                              </div>
+                            </div>
+                            <div style="width: 180px;" class="progress">
+                              <div class="progress-bar bg-gradient-info w-{{ project.progress }}" role="progressbar" aria-valuenow="{{ project.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-muted"><i>Budget</i></td>
+                        <td style="font-size: 13px" class="font-weight-bolder text-muted">{{ project.budget }}$</td>
+                      </tr>
+                      <tr>
+                        <td class="text-muted"><i>Team</i></td>
+                        <td>
+                          {% if project.team %}
+                          <div class="avatar-group">
+                            <a href="{% url 'workflow_organizer:team-detail' pk=project.team.id %}" class="avatar ms-3 avatar-sm rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ project.team.name }}">
+                              <p style="display: inline" class="text-muted mt-3 me-0">{{ project.team.name }}</p>
+                            </a>
+                            {% else %}
+                            <a href="{% url 'workflow_organizer:toggle-project-assign' pk=project.id %}"
+                               class="btn mt-n2 py-1 px-3 text-muted"
+                               style="box-shadow: 0 0.3125rem 0.625rem 0 rgba(51, 153, 255, 0.32)">
+                              <i class="text-xs">Assign my team</i>
+                            </a>
+                          </div>
+                          {% endif %}
+                            {% if project in user.team.projects.all %}
+                              <a href="{% url 'workflow_organizer:toggle-project-assign' pk=project.id %}"
+                                 class="btn mt-n2 py-1 px-3 ms-5 text-muted"
+                                 style="box-shadow: 0 0.3125rem 0.625rem 0 rgba(51, 153, 255, 0.32)">
+                                <i class="text-xs">Eliminate my team</i>
+                              </a>
+                            {% endif %}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-muted"><i>Crunch time</i></td>
+                        <td>
+                          {{ project.time_constraints }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <hr class="hr mb-4" style="border-bottom: 1px solid rgba(0, 0, 0, .5)">
+                  <div class="row mb-4">
+                    <h5 class="h5 mb-4 mt-2">Depiction</h5>
+                    <p>{{ project.depiction }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+{% endblock content %}

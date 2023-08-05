@@ -1,0 +1,368 @@
+Version with attempt to line up tags and count of tegs
+{% extends "base.html" %}
+{% load static %}
+
+{% block css_additional %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/task_panel.css' %}">
+  <style>
+    {#.widget-col {#}
+    {#    display: flex;#}
+    {#    flex-direction: column;#}
+    {#    align-items: center;#}
+    {#    justify-content: center;#}
+    {#    padding: 20px;#}
+    {#}#}
+
+    {#.widget-title {#}
+    {#    text-align: center;#}
+    {#    margin: 10px 0;#}
+    {#}#}
+
+    .row.widget-row {
+        width: 100%;
+        padding: 0 0 20px 0;
+        height: auto;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+
+    .justify-center {
+      justify-content: center; #centering_widgets
+    }
+
+    .col-md-3 {
+    flex: 0 0 auto;
+    width: 33%;
+    }
+
+   </style>
+
+{% endblock %}
+
+{% block title %} Task Panel {% endblock %}
+
+{% block content %}
+{% include "includes/sidebar.html" %}
+<div class="container-fluid custom-margin-top custom-margin-bottom">
+  <div class="row">
+    <section class="pt-sm-7 pt-5 pb-2 position-relative bg-white overflow-hidden mt-4">
+      <span class="mask bg-light opacity-2"></span>
+      <div style="width:100%" class="container">
+        <div class="row">
+          <div class="container mt-6 mb-4">
+            <h2 style="color:orange;" class="h1 mb-2">Task Panel</h2>
+            {% if user.tasks.all %}
+                <p class="lead">Pick up your task</p>
+            {% else %}
+                <p class="lead">No existing tasks!</p>
+            {% endif %}
+          </div>
+          <div style="width: 100%" class="d-flex">
+            <label class="p me-2">Tags:</label>
+              {% for tag in tags %}
+                <a
+                  style="background-color: rgba(70, 158, 255, 1); border: 1px solid rgba(60, 199, 255, .2); font-size: 15px; height: 22px; padding: 3px 3px; margin: 0 3px;"
+                  class="btn button-sm text-white shadow-info"
+                  href="{% url 'workflow_organizer:task-panel' %}?tag={{ tag.name | urlencode }}"
+                >
+                  {{ tag.name }}
+                </a>
+              {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+ <div class="container-fluid">
+    <div style="width:100%" class="container">
+      <div class="row widget-row justify-center">
+        <div class="col-md-4 col-4">
+          <div style="width:100%; background-color: rgb(255, 180, 29); border: 1px solid #FF007F; border-radius: 20px; box-shadow: 0 2px 12px 0 rgba(255, 0, 127, 0.16); padding:0 0 20px 0">
+            <div class="row">
+              <div class="col-8">
+                <div style="width:100%; box-shadow: none; border:none;"
+                  class="btn btn-primary h-1 px-2 pt-4 bg-transparent">
+                  <h5 style="color: black;" class="ps-2 h4 font-weight-bold me-9">1</h5>
+                </div>
+              </div>
+            <div class="pt-3 col-4">
+              <span style="background-color:red; width:34px; height:30px;"
+                  class="badge text-white ms-6">{{ completed_tasks.count }}</span>
+            </div>
+          </div>
+        <div class="container-fluid d-flex flex-column align-items-center" style="padding: 0;">
+          {% for task in completed_tasks %}
+            <div class="col-md-4 mt-3 widget-col w-100" style="margin-bottom: 0;">
+              <a href="{% url 'workflow_organizer:task-detail' pk=task.id %}">
+                <div style="width: 90%; margin-bottom: 0;" class="card mt-1 mx-auto mb-3">
+                  <div class="card shadow-primary" style="height: 250px;">
+                    <div class="inner-widget" style="height: 250px; justify-content: space-between;">
+                      <div class="row align-items-center mt-1 mb-3">
+                        <div class="col-6 text-left">
+                          <a href="{% url 'workflow_organizer:task-detail' pk=task.id %}">
+                            <p style="margin: 0 0 0 0; padding-left: 15px" class="text-muted text-sm"><i>#{{ task.task_type.name }}</i></p>
+                          </a>
+                        </div>
+                        <div class="col-3 text-right mt-3 mb-3" style="padding: 0">
+                          {% for tag in task.tags.all|slice:":1" %}
+                              <a
+                                style="background-color: rgba(70, 158, 255, 1); border: 1px solid rgba(60, 199, 255, .2); font-size: 15px; height: 22px; padding: 3px 3px; margin: 3px 70px;"
+                                class="btn button-sm text-white shadow-info"
+                                href="{% url 'workflow_organizer:task-panel' %}?tag={{ tag.name | urlencode }}"
+                              >
+                                {{ tag.name }}
+                              </a>
+                         {% endfor %}
+                        </div>
+                        <div class="col-3 text-right mt-3 mb-3" style="padding: 0">
+                          {% if task.tags.all %}
+{#                            <div style="margin-top: 4px; flex: 1">#}
+                              {% if task.tags_remained > 0 %}
+                                <button style="float: right; background-color: rgba(58, 198, 255, .6); border: 1px solid rgba(60, 199, 255, .2); font-size: 15px; height: 22px; padding: 3px 10px; color: white; margin: 0 2px" class="btn button-sm mx-n0">+{{ task.tags_remained }}</button>
+                              {% endif %}
+{#                            </div>#}
+                          {% endif %}
+                        </div>
+                      <div class="row">
+                        <div style="height: 60px" class="card-body mb-5">
+                          <h5 class="h5 text-center">{{ task.name }}</h5>
+                        </div>
+                      </div>
+                      <div class="row align-items-center">
+                        <div class="col-6 text-left" style="padding: 20px">
+                          <div class="task-time-constraints" style="align-content: center; justify-content: space-between;">
+                            {% if task.time_constraints %}
+                              {{ task.time_constraints }}
+                            {% else %}
+                              No time constraints specified.
+                            {% endif %}
+                          </div>
+                        </div>
+                        <div class="col-6 text-right" style="padding-right: 5px">
+                          {% if task.assignees.all %}
+                            <ul class="text-end">
+                              {% for assignee in task.assignees.all %}
+                                <a
+                                  href="{% url 'workflow_organizer:worker-detail' pk=assignee.id %}"
+                                  class="avatar avatar-sm rounded-circle"
+                                  data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                  <img src="{% static 'img/team/'|add:assignee.username|add:'.jpg' %}">
+                                </a>
+                              {% endfor %}
+                            </ul>
+                          {% else %}
+                            <p class="text-end">No worker assigned to this task.</p>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            {% endfor %}
+            </div>
+            <div style="margin-top: 10px; flex:1; width: 100%">
+              <a class="nav-link nav-link-icon me-4 ms-3" style="padding-left: 10px" href="{% url 'workflow_organizer:task-create' %}" target="_blank">
+                <button style=" width: 100%; height: 50px; float: right; background-color: rgba(58, 198, 255, .6); border: 1px solid rgba(60, 199, 255, .2); font-size: 20px; padding: 3px 10px; color: white; margin: 0 2px" type="button" class="btn btn-primary btn-lg">+ Add new task</button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 col-4">
+    <div style="width:100%; background-color: rgb(255, 180, 29); border: 1px solid #FF007F; border-radius: 20px; box-shadow: 0 2px 12px 0 rgba(255, 0, 127, 0.16); padding:0 0 20px 0">
+      <div class="row">
+        <div class="col-8">
+          <div style="width:100%; box-shadow: none; border:none;"
+            class="btn btn-primary h-1 px-2 pt-4 bg-transparent">
+            <h5 style="color: black;" class="ps-2 h4 font-weight-bold me-9">2</h5>
+          </div>
+        </div>
+      <div class="pt-3 col-4">
+        <span style="background-color:red; width:34px; height:30px;"
+            class="badge text-white ms-6">{{ completed_tasks.count }}</span>
+      </div>
+    </div>
+    <div class="container-fluid d-flex flex-column align-items-center" style="padding: 0;">
+      {% for task in completed_tasks %}
+        <div class="col-md-4 mt-3 widget-col w-100" style="margin-bottom: 0;">
+          <a href="{% url 'workflow_organizer:task-detail' pk=task.id %}">
+            <div style="width: 90%; margin-bottom: 0;" class="card mt-1 mx-auto mb-3">
+              <div class="card shadow-primary" style="height: 250px;">
+                <div class="inner-widget" style="height: 250px; justify-content: space-between;">
+                  <div class="row align-items-center mt-1 mb-3">
+                    <div class="col-6 text-left">
+                      <a href="{% url 'workflow_organizer:task-detail' pk=task.id %}">
+                        <p style="margin: 0 0 0 0; padding-left: 15px" class="text-muted text-sm"><i>#{{ task.task_type.name }}</i></p>
+                      </a>
+                    </div>
+                    <div class="col-6 text-right mt-3 mb-3" style="padding: 0">
+                      {% for tag in task.tags.all|slice:":1" %}
+                          <a
+                            style="background-color: rgba(70, 158, 255, 1); border: 1px solid rgba(60, 199, 255, .2); font-size: 15px; height: 22px; padding: 3px 3px; margin: 3px 70px;"
+                            class="btn button-sm text-white shadow-info"
+                            href="{% url 'workflow_organizer:task-panel' %}?tag={{ tag.name | urlencode }}"
+                          >
+                            {{ tag.name }}
+                          </a>
+                        </div>
+                      {% endfor %}
+                      <div class="col-6 text-right mt-3 mb-3" style="padding: 0">
+                        {% if task.tags.all %}
+  {#                            <div style="margin-top: 4px; flex: 1">#}
+                            {% if task.tags_remained > 0 %}
+                              <button style="float: right; background-color: rgba(58, 198, 255, .6); border: 1px solid rgba(60, 199, 255, .2); font-size: 15px; height: 22px; padding: 3px 10px; color: white; margin: 0 2px" class="btn button-sm mx-n0">+{{ task.tags_remained }}</button>
+                            {% endif %}
+  {#                            </div>#}
+                        {% endif %}
+                      </div>
+                    </div>
+                  <div class="row">
+                    <div style="height: 60px" class="card-body mb-5">
+                      <h5 class="h5 text-center">{{ task.name }}</h5>
+                    </div>
+                  </div>
+                  <div class="row align-items-center">
+                    <div class="col-6 text-left" style="padding: 20px">
+                      <div class="task-time-constraints" style="align-content: center; justify-content: space-between;">
+                        {% if task.time_constraints %}
+                          {{ task.time_constraints }}
+                        {% else %}
+                          No time constraints specified.
+                        {% endif %}
+                      </div>
+                    </div>
+                    <div class="col-6 text-right" style="padding-right: 5px">
+                      {% if task.assignees.all %}
+                        <ul class="text-end">
+                          {% for assignee in task.assignees.all %}
+                            <a
+                              href="{% url 'workflow_organizer:worker-detail' pk=assignee.id %}"
+                              class="avatar avatar-sm rounded-circle"
+                              data-bs-toggle="tooltip" data-bs-placement="bottom">
+                              <img src="{% static 'img/team/'|add:assignee.username|add:'.jpg' %}">
+                            </a>
+                          {% endfor %}
+                        </ul>
+                      {% else %}
+                        <p class="text-end">No worker assigned to this task.</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+        </div>
+        <div style="margin-top: 10px; flex:1; width: 100%">
+          <a class="nav-link nav-link-icon me-4 ms-3" style="padding-left: 10px" href="{% url 'workflow_organizer:task-create' %}" target="_blank">
+            <button style=" width: 100%; height: 50px; float: right; background-color: rgba(58, 198, 255, .6); border: 1px solid rgba(60, 199, 255, .2); font-size: 20px; padding: 3px 10px; color: white; margin: 0 2px" type="button" class="btn btn-primary btn-lg">+ Add new task</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+ </div>
+</div>
+  <div class="col-md-4 col-4">
+    <div style="width:100%; background-color: rgb(255, 180, 29); border: 1px solid #FF007F; border-radius: 20px; box-shadow: 0 2px 12px 0 rgba(255, 0, 127, 0.16); padding:0 0 20px 0">
+      <div class="row">
+        <div class="col-8">
+          <div style="width:100%; box-shadow: none; border:none;"
+            class="btn btn-primary h-1 px-2 pt-4 bg-transparent">
+            <h5 style="color: black;" class="ps-2 h4 font-weight-bold me-9">3</h5>
+          </div>
+        </div>
+      <div class="pt-3 col-4">
+        <span style="background-color:red; width:34px; height:30px;"
+            class="badge text-white ms-6">{{ completed_tasks.count }}</span>
+      </div>
+    </div>
+    <div class="container-fluid d-flex flex-column align-items-center" style="padding: 0;">
+      {% for task in completed_tasks %}
+        <div class="col-md-4 mt-3 widget-col w-100" style="margin-bottom: 0;">
+          <a href="{% url 'workflow_organizer:task-detail' pk=task.id %}">
+            <div style="width: 90%; margin-bottom: 0;" class="card mt-1 mx-auto mb-3">
+              <div class="card shadow-primary" style="height: 250px;">
+                <div class="inner-widget" style="height: 250px; justify-content: space-between;">
+                  <div class="row align-items-center mt-1 mb-3">
+                    <div class="col-6 text-left">
+                      <a href="{% url 'workflow_organizer:task-detail' pk=task.id %}">
+                        <p style="margin: 0 0 0 0; padding-left: 15px" class="text-muted text-sm"><i>#{{ task.task_type.name }}</i></p>
+                      </a>
+                    </div>
+                    <div class="col-6 text-right mt-3 mb-3" style="padding: 0">
+                      {% for tag in task.tags.all|slice:":1" %}
+                          <a
+                            style="background-color: rgba(70, 158, 255, 1); border: 1px solid rgba(60, 199, 255, .2); font-size: 15px; height: 22px; padding: 3px 3px; margin: 3px 70px;"
+                            class="btn button-sm text-white shadow-info"
+                            href="{% url 'workflow_organizer:task-panel' %}?tag={{ tag.name | urlencode }}"
+                          >
+                            {{ tag.name }}
+                          </a>
+                        </div>
+                      {% endfor %}
+                      <div class="col-6 text-right mt-3 mb-3" style="padding: 0">
+                        {% if task.tags.all %}
+{#                            <div style="margin-top: 4px; flex: 1">#}
+                            {% if task.tags_remained > 0 %}
+                              <button style="float: right; background-color: rgba(58, 198, 255, .6); border: 1px solid rgba(60, 199, 255, .2); font-size: 15px; height: 22px; padding: 3px 10px; color: white; margin: 0 2px" class="btn button-sm mx-n0">+{{ task.tags_remained }}</button>
+                            {% endif %}
+{#                            </div>#}
+                        {% endif %}
+                      </div>
+                    </div>
+                  <div class="row">
+                    <div style="height: 60px" class="card-body mb-5">
+                      <h5 class="h5 text-center">{{ task.name }}</h5>
+                    </div>
+                  </div>
+                  <div class="row align-items-center">
+                    <div class="col-6 text-left" style="padding: 20px">
+                      <div class="task-time-constraints" style="align-content: center; justify-content: space-between;">
+                        {% if task.time_constraints %}
+                          {{ task.time_constraints }}
+                        {% else %}
+                          No time constraints specified.
+                        {% endif %}
+                      </div>
+                    </div>
+                    <div class="col-6 text-right" style="padding-right: 5px">
+                      {% if task.assignees.all %}
+                        <ul class="text-end">
+                          {% for assignee in task.assignees.all %}
+                            <a
+                              href="{% url 'workflow_organizer:worker-detail' pk=assignee.id %}"
+                              class="avatar avatar-sm rounded-circle"
+                              data-bs-toggle="tooltip" data-bs-placement="bottom">
+                              <img src="{% static 'img/team/'|add:assignee.username|add:'.jpg' %}">
+                            </a>
+                          {% endfor %}
+                        </ul>
+                      {% else %}
+                        <p class="text-end">No worker assigned to this task.</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+        </div>
+        <div class="mx-auto" style="margin-top: 10px; flex:1; width: 100%">
+          <a class="nav-link nav-link-icon me-4 ms-3" style="padding-left: 10px;" href="{% url 'workflow_organizer:task-create' %}" target="_blank">
+            <button style=" width: 100%; height: 50px; float: right; background-color: rgba(58, 198, 255, .6); border: 1px solid rgba(60, 199, 255, .2); font-size: 20px; padding: 3px 10px; color: white; margin: 0 2px" type="button" class="btn btn-primary btn-lg">+ Add new task</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

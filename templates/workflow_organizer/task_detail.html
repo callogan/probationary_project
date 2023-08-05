@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} {{ task.name }} {% endblock %}
+
+{% block content %}
+
+{% include "includes/sidebar.html" %}
+
+  <div class="row">
+    <header>
+{#      Filler#}
+    </header>
+
+    <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6 mb-4">
+      <section class="py-sm-7 py-5 position-relative">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 mx-auto">
+              <div class="col-lg-9 col-md-9 z-index-2 position-relative px-md-1 px-sm-5 mx-auto mb-2">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h3 class="mb-2">{{ task.name }}</h3>
+                  <div class="dropdown">
+                    <div style="box-shadow: 0 0.3125rem 0.625rem 0 rgba(51, 153, 255, 0.32)" class="card dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md dropdown-md-responsive mt-0 mt-lg-3 p-3 border-radius-lg" aria-labelledby="dropdownMenuDocs">
+                      <div class="d-none d-lg-block">
+                        <div class="list-group">
+                          <a class="dropdown-item py-2 ps-3 border-radius-md" target="_blank" href="{% url 'workflow_organizer:task-update' pk=task.id %}">
+                            <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-center align-items-center p-0">Edit task</h6>
+                          </a>
+                          <a class="dropdown-item py-2 ps-3 border-radius-md" target="_blank" href="{% url 'workflow_organizer:task-delete' pk=task.id %}">
+                            <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-center align-items-center p-0">Delete task</h6>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <table class="mx-n2 table table-borderless">
+                  <thead>
+                    <tr>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="text-muted"><i>Priority</i></td>
+                      <td>
+                        {% if task.priority in "U" %}
+                          <span class="badge bg-primary">{{ task.get_priority_display }}</span>
+                        {% elif task.priority in "A" %}
+                          <span class="badge bg-warning">{{ task.get_priority_display }}</span>
+                        {% else %}
+                          <span class="badge bg-success">{{ task.get_priority_display }}</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-muted"><i>Status</i></td>
+                      <td>{% if not task.is_completed and task.assignees.count > 0 %}Underway{% elif task.is_completed %}Completed{% else %}Queue{% endif %}</td>
+                    </tr>
+                    <tr>
+                      <td class="text-muted"><i>Assignees</i></td>
+                      <td>
+                        <div class="dropdown">
+                          <div class="list-unstyled">
+                            {% for assignee in task.assignees.all %}
+                              <div class="list-item mb-2">
+                                <a href="{% url 'workflow_organizer:worker-detail' pk=assignee.id %}"
+                                 class="text-muted avatar-sm"
+                                 title="{{ assignee.first_name }} {{ assignee.last_name }}">
+                                  <p style="margin: 5px; display: inline">{{ assignee.first_name }} {{assignee.last_name }}</p>
+                                </a>
+                              </div>
+                            {% endfor %}
+                            <div class="list-item mb-2">
+                              {% if task in user.tasks.all %}
+                                <a href="{% url 'workflow_organizer:toggle-task-assign' pk=task.id %}" class="text-muted">
+                                  <i class="text-sm">Remove me</i>
+                                </a>
+                              {% else %}
+                                <a href="{% url 'workflow_organizer:toggle-task-assign' pk=task.id %}" class="text-muted">
+                                  <i class="text-sm">Add me</i>
+                                </a>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-muted"><i>Crunch time</i></td>
+                      <td>
+                        {{ task.time_constraints }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-muted"><i>Task type</i></td>
+                      <td>
+                        <i>#{{ task.task_type }}</i>
+                      </td>
+                    </tr>
+                    <tr>
+                      {% if task.tags.all %}
+                        <td class="text-muted"><i>Tags</i></td>
+                        <td>
+                          <div class="dropdown">
+                            {% for tag in task.tags.all %}
+                              <a
+                              style="color: white; background-color: rgba(58, 198, 255, .6); border: 1px solid rgba(60, 199, 255, .2); font-size:10px; height:22px; padding:3px 3px; margin: 0"
+                              class="btn button-sm"
+                              href="{% url 'workflow_organizer:task-panel' %}?tag={{ tag.name | urlencode }}">
+                              {{ tag.name }}
+                              </a>
+                            {% endfor %}
+                          </div>
+                        </td>
+                      {% endif %}
+                    </tr>
+                  </tbody>
+                </table>
+                <hr class="hr mb-4" style="border-bottom: 1px solid rgba(0, 0, 0, .5)">
+                <div class="row mb-4">
+                  <h5 class="h5">Queue</h5>
+                  <p>{{ task.depiction }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+{% endblock content %}

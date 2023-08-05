@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+  {% include "includes/sidebar.html" %}
+  <div class="row mt-8">
+    <div class="row my-6 mx-7">
+      <h1 class="text-primary">Dashboard</h1>
+      <h5 class="mb-6">Here is reflected sweeply summarized information related to projects, teams and users' activities</h5>
+      <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+        <div style="background-color: orangered; border: 1px solid #FFC0CB; border-radius: 20px; box-shadow: 0 2px 12px 0 rgba(255, 0, 127, 0.16);" class="card pb-4">
+          <div class="card-header pb-0 text-center"> <!-- Center the header -->
+            <div class="row">
+              <div class="col-lg-6 col-7 mx-auto"> <!-- Center the badge -->
+                <div style="display: inline-flex">
+                  <h5 style="color: orangered; font-size: 25px; font-weight: bold;">PROJECTS</h5>
+                  <p class="text-sm mb-0">
+                    <span style="background-color: rgb(255, 0, 127); font-size: 14px; color: white; width: 34px; height: 30px;"
+                                class="badge mt-auto">{{ projects|length }}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-center text-uppercase text-primary text-xxs font-weight-bolder opacity-7">Name</th>
+                    <th class="text-center text-uppercase text-primary text-xxs font-weight-bolder opacity-7">Budget</th>
+                    <th class="text-center text-uppercase text-primary text-xxs font-weight-bolder opacity-7">Team</th>
+                    <th class="text-center text-uppercase text-primary text-xxs font-weight-bolder opacity-7">Time constraints</th>
+                    <th class="text-center text-uppercase text-primary text-xxs font-weight-bolder opacity-7">Completion</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for project in projects %}
+                    <tr>
+                      <td class="col-lg-5">
+                        <div class="d-flex px-2 py-1">
+                          <a href="{% url 'workflow_organizer:project-detail' pk=project.id %}" class="d-flex flex-column justify-content-center mx-3">
+                            <h6 class="mb-0 text-sm text-primary">{{ project.name }}</h6>
+                          </a>
+                        </div>
+                      </td>
+                      <td style="font-size: 13px" class="font-weight-bolder text-primary">{{ project.budget }}$</td>
+                      <td class="align-middle text-center text-primary text-sm col-lg-3">
+                        <span class="text-xs font-weight-bold text-primary"> {{ project.time_constraints }} </span>
+                      </td>
+                     </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div style="background-color: #87CEFA;border: 1px solid #6f00ff;border-radius: 20px;box-shadow: 0 2px 12px 0 rgba(255, 0, 127, 0.16); padding:0 0 20px 0" class="card my-5">
+          <div style="background-color: transparent;border-radius: 20px;" class="card-header pb-0">
+            <div class="row">
+              <div class="col-lg-6 col-7">
+                <div style="display: inline-flex">
+                  <h5 style="color: rgb(2, 124, 199);font-size: 25px; font-weight:bold; padding:0 10px;" class="">TEAMS</h5>
+                  <p class="text-sm mb-0">
+                    <span style="background-color:rgb(111, 0, 255); font-size: 14px; color: white; width:34px; height:30px;" class="badge mt-auto">{{ teams|length }}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th style="color:#6f00ff" class="text-center text-uppercase text-xxs font-weight-bolder opacity-7">Teams</th>
+                    <th style="color:#6f00ff" class="text-center text-uppercase text-xxs font-weight-bolder opacity-7">Members</th>
+                    <th style="color:#6f00ff" class="text-center text-uppercase text-xxs font-weight-bolder opacity-7">Budget</th>
+                    <th style="color:#6f00ff" class="text-center text-uppercase text-xxs font-weight-bolder opacity-7">Projects</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for team in teams %}
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 style="color:#6f00ff" class="mb-0 text-sm">{{ team.name }}</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="text-center">
+                          {% for worker in team.workers.all %}
+                            <a href="{% url 'workflow_organizer:worker-detail' pk=worker.id %}"
+                               data-bs-toggle="tooltip"
+                               data-bs-placement="bottom"
+                               title="{{ worker.first_name }} {{ worker.last_name }}">
+                            </a>
+                          {% endfor %}
+                        </div>
+                      </td>
+                      <td style="font-size: 13px; color: #6f00ff" class="font-weight-bolder text-center">{{ team.sum_of_budget }}$</td>
+                      <td class="align-middle text-center text-sm">
+                        <span style="color:#6f00ff" class="text-xs font-weight-bold"> {{ team.projects_count }} </span>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

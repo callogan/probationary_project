@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <div class="container">
+    <div class="row mt-4">
+      <div class="col-lg-3 col-md-6">
+        <div style="background-color: rgba(6, 146, 72, .04);border: 1px solid #069248;border-radius: 20px;box-shadow: 0 2px 12px 0 rgba(6, 146, 72, .16);" class="card me-5">
+          <div style="background-color: transparent;border-radius: 20px;" class="card-header pb-0">
+            <h5 style="color: #069248;font-size: 25px; font-weight:bold; padding:0 10px;" class="mx-3">USERS HIERARCHICAL STRATIFICATION</h5>
+          </div>
+          <div class="card-body p-3">
+          <div style="background-color: transparent;border-radius: 20px;" class="card-header pb-0">
+            <h5 style="color: #069248;font-size: 25px; font-weight:bold; padding:0 10px;" class="mx-3">Frontrunners</h5>
+          </div>
+            <ol>
+              {% for user in top_users %}
+                <li style="color: #069248;" class="mt-3 ms-1 {% if user in users.0 or user in users.1 or user in users.2 %}list-unstyled ms-n4{% endif %}">
+                  <a href="{% url 'workflow_organizer:worker-detail' pk=user.id %}"
+                     class="text-muted avatar-sm"
+                     title="{{ user.first_name }} {{ user.last_name }}">
+                    {% if users.all|slice:":1" %}
+                      <span style="font-size: 20px">🥇</span>
+                      <img class="mt-n2 ms-1" style="border-radius: 50% !important;" src="{% static 'img/team/'|add:user.username|add:'.jpeg' %}">
+                      <p style="margin: 3px; display: inline">{{ user.first_name }} {{ user.last_name }}</p>
+                    {% elif users.all|slice:"1:2" %}
+                      <span style="font-size: 20px">🥈</span>
+                      <img class="mt-n2 ms-1" style="border-radius: 50% !important;" src="{% static 'img/team/'|add:user.username|add:'.jpeg' %}">
+                      <p style="margin: 3px; display: inline">{{ user.first_name }} {{ user.last_name }}</p>
+                    {% elif users.all|slice:"2:3" %}
+                      <span style="font-size: 20px">🥉</span>
+                      <img class="mt-n2 ms-1" style="border-radius: 50% !important;" src="{% static 'img/team/'|add:user.username|add:'.jpeg' %}">
+                      <p style="margin: 3px; display: inline">{{ user.first_name }} {{ user.last_name }}</p>
+                    {% else %}
+                      <img class="mt-n2 ms-1" style="border-radius: 50% !important;" src="{% static 'img/team/'|add:user.username|add:'.jpeg' %}">
+                      <p style="margin: 3px; display: inline">{{ user.first_name }} {{ user.last_name }}</p>
+                    {% endif %}
+                </a>
+                  <hr class="bg-success">
+                </li>
+              {% endfor %}
+           </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-lg-3 col-md-6">
+        <div style="background-color: rgba(6, 146, 72, .04);border: 1px solid #069248;border-radius: 20px;box-shadow: 0 2px 12px 0 rgba(6, 146, 72, .16);" class="card me-5">
+          <div style="background-color: transparent;border-radius: 20px;" class="card-header pb-0">
+            <h5 style="color: #069248;font-size: 25px; font-weight:bold; padding:0 10px;" class="mx-3">OTHER USERS</h5>
+          </div>
+          <div class="card-body p-3">
+            <ol>
+              {% for user in other_users %}
+                <li style="color: #069248;" class="mt-3 ms-1 list-unstyled ms-n4">
+                  <a href="{% url 'workflow_organizer:worker-detail' pk=user.id %}"
+                     class="text-muted avatar-sm"
+                     title="{{ user.first_name }} {{ user.last_name }}">
+                    {#                      Filler#}
+                    <p style="margin: 3px; display: inline">{{ user.first_name }} {{ user.last_name }}</p>
+                </a>
+                  <hr class="bg-success">
+                </li>
+              {% endfor %}
+           </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

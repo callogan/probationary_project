@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Task Board {% endblock %}
+
+{% block content %}
+
+{% include "includes/sidebar.html" %}
+
+  <div class="row">
+    <header>
+      <div class="page-header min-height-300">
+        <span class="mask bg-gradient-primary opacity-6"></span>
+      </div>
+    </header>
+
+    <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6 mb-4">
+      <section class="py-sm-7 py-5 position-relative">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 mx-auto">
+              <div style="float: right" class="mt-n6">
+                {% include "includes/search_form.html" %}
+              </div>
+              <br><br>
+              <div class="col-lg-9 col-md-9 z-index-2 position-relative px-md-1 px-sm-5 mx-auto mb-2">
+                <br>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h2 class="mb-2">Positions</h2>
+                </div>
+                {% if position_list %}
+                  <p class="mb-6">Find out about duties in your team!</p>
+                {% else %}
+                  <p class="mb-6">No existing positions!</p>
+                {% endif %}
+                {% for position in position_list %}
+                  <div class="mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <h5 class="mb-3"><i>{{ position.name }}</i></h5>
+                    </div>
+                    <ul class="list-unstyled">
+                      {% for duty in position.duties_to_a_list %}
+                        <li class="list-item mb-1">
+                          {{ duty }}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                  <hr class="hr mb-5">
+                {% endfor %}
+                {% include 'includes/pagination.html' %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+{% endblock content %}

@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} {{ worker.first_name }}'s Account {% endblock %}
+
+{% block content %}
+
+{% include "includes/sidebar.html" %}
+
+  <div class="row">
+    <header>
+{#      Filler#}
+    </header>
+
+    <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6 mb-4">
+      <section class="py-sm-7 py-5 position-relative">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 mx-auto">
+              <div class="row py-5">
+                <div class="col-lg-7 col-md-7 z-index-2 position-relative px-md-2 px-sm-5 mx-auto mb-4">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h3 class="mb-0">{{ worker.first_name }} {{ worker.last_name }}</h3>
+                    {% if user.id == worker.id %}
+                      <div class="div dropdown">
+                        <div style="box-shadow: 0 0.3125rem 0.625rem 0 rgba(151, 153, 55, 0.32)" class="card dropdown-menu dropdown-menu-end dropdown-menu-animation dropdown-md dropdown-md-responsive mt-0 mt-lg-3 p-3 border-radius-lg" aria-labelledby="dropdownMenuDocs">
+                          <div class="d-none d-lg-block">
+                            <div class="list-group">
+                              <a class="dropdown-item py-2 ps-3 border-radius-md" target="_blank" href="{% url 'workflow_organizer:worker-update' pk=worker.id %}">
+                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-center align-items-center p-0">Edit profile</h6>
+                              </a>
+                              <a class="dropdown-item py-2 ps-3 border-radius-md" target="_blank" href="{% url 'workflow_organizer:worker-delete' pk=worker.id %}">
+                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-center align-items-center p-0">Delete profile</h6>
+                              </a>
+                              {% if user.team %}
+                                <a class="dropdown-item py-2 ps-3 border-radius-md" target="_blank" href="{% url 'workflow_organizer:team-update' pk=user.team.id %}">
+                                  <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-center align-items-center p-0">Edit team</h6>
+                                </a>
+                                <a class="dropdown-item py-2 ps-3 border-radius-md" target="_blank" href="{% url 'workflow_organizer:team-delete' pk=user.team.id %}">
+                                  <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-center align-items-center p-0">Delete team</h6>
+                                </a>
+                              {% else %}
+                                <a class="dropdown-item py-2 ps-3 border-radius-md" target="_blank" href="{% url 'workflow_organizer:team-create'%}">
+                                  <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-center align-items-center p-0">Create team</h6>
+                                </a>
+                              {% endif %}
+                              <a class="dropdown-item py-2 ps-3 border-radius-md" target="_blank" href="{% url 'workflow_organizer:task-create'%}">
+                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-center align-items-center p-0">Create task</h6>
+                              </a>
+                              <a class="dropdown-item py-2 ps-3 border-radius-md" target="_blank" href="{% url 'workflow_organizer:project-create'%}">
+                                <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-center align-items-center p-0">Create project</h6>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {% else %}
+                      {% if user.team == worker.team %}
+                        <a href="{% url 'workflow_organizer:toggle-team-add' pk=worker.id %}" class="btn shadow-warning btn-white">Remove from team</a>
+                      {% else %}
+                        <a href="{% url 'workflow_organizer:toggle-team-add' pk=worker.id %}" class="btn shadow-success btn-white">Add to team</a>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-auto">
+                      {% if worker.team %}
+                        <a href="{% url 'workflow_organizer:team-detail' pk=worker.team.id %}"
+                           class="avatar-xs"
+                           title="{{ worker.team.name }}">
+                          <p style="display: inline">{{ worker.team.name }} team</p>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="row mb-0">
+                    <div class="col-auto">
+                      <span class="mb-0"><i>#{{ worker.position.name }}</i></span>
+                    </div>
+                  </div>
+                  <div class="row mb-4">
+                    <div class="col-auto">
+                      <span class="h6">{{ worker.tasks.count }}</span>
+                      <span>Tasks</span>
+                    </div>
+                    <div class="col-auto">
+                      <span class="h6">{{ worker.finished_tasks.count }}</span>
+                      <span>Finished Tasks</span>
+                    </div>
+                  </div>
+                  <p class="text-lg mb-0">{{ worker.email }}</p>
+                    </ul>
+                  <br>
+                </div>
+                <br>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h3 class="mb-2 mx-auto text-muted">
+                    Check {% if user.id == worker.id %} my {% else %} {{ worker.first_name}}'s {% endif %} track record
+                  </h3>
+                </div>
+                <br>
+                <div class="d-flex justify-content-between align-items-center mb-0">
+                  {% if worker.tasks %}
+                    <div style="width: 90%" class="card bg-light mx-auto">
+                      <div style="width: 90%" class="table-wrap table-responsive">
+                        {% if worker.past_due_tasks %}
+                          <div class="dropdown">
+                            <div style="border-radius:10px;" class="w200 p-0 dropdown-menu">
+                              <small class="btn btn-primary h-4 px-2">PAST-DUE</small>
+                            </div>
+                            <div style="border-radius:10px;" class="text-center w100 p-0 py-2 dropdown-menu">
+                              <small class="text-muted">CO-WORKERS</small>
+                                </td>
+                                <td style="border-radius:10px;" class="text-center w100 p-0 py-2" scope="col">
+                                  <small class="text-muted">TIME CONSTRAINTS</small>
+                                </td>
+                                <td style="border-radius:10px;" class="text-center w50 p-0 py-2" scope="col">
+                                  <small class="text-muted">PRIORITY</small>
+                                </td>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for task in worker.past_due_tasks.all %}
+                                <tr class="border-bottom bg-white">
+                                  <td style="border-radius:10px;" class="align-middle">
+                                    <div style="width:300px" class="d-flex align-items-center">
+                                      <a class="link mx-3" href="{% url 'workflow_organizer:task-detail' pk=task.id %}">{{ task.name }}</a>
+                                    </div>
+                                  </td>
+                                  <td style="border-radius:10px" class="align-middle">
+                                    <div class="row text-center">
+                                   </div>
+                                  </td>
+                                  <td style="border-radius:10px;" class="text-center align-middle">
+                                    <div class="col-12">
+                                      <span class="far fa-calendar-alt text-muted">  {{ task.time_constraints }}</span>
+                                    </div>
+                                  </td>
+                                  <td style="width:150px; border-radius:10px;" class="">
+                                    {% if task.priority in "U" %}
+                                      <span style="width:130px" class="btn btn-secondary red">URGENT PRIORITY</span>
+                                    {% elif task.priority in "A" %}
+                                      <span style="width:140px" class="btn btn-secondary orange">AVERAGE PRIORITY</span>
+                                    {% elif task.priority in "S" %}
+                                      <span style="width:140px" class="btn btn-secondary green">SIDE-TRACKED TASK</span>
+                                    {% endif %}
+                                  </td>
+                                </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        {% endif %}
+                        {% if worker.underway_tasks %}
+                          <table class="table table-borderless">
+                            <thead>
+                              <tr class="p-0">
+                                <td class="w200 p-0" scope="col">
+                                  <small class="btn btn-info h-5 px-2">UNDERWAY PROJECTS</small>
+                                </td>
+                                <td class="text-center w100 p-0 py-2" scope="col">
+                                  <small class="text-muted">CO-WORKERS</small>
+                                </td>
+                                <td class="text-center w100 p-0 py-2" scope="col">
+                                  <small class="text-muted">TIME CONSTRAINTS</small>
+                                </td>
+                                <td class="text-center w50 p-0 py-2" scope="col">
+                                  <small class="text-muted">PRIORITY</small>
+                                </td>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for task in worker.underway_tasks %}
+                                <tr class="border-bottom bg-white">
+                                  <td style="border-radius:10px;" class="align-middle">
+                                    <div style="width:300px" class="d-flex align-items-center">
+                                      <a class="link mx-3" href="{% url 'workflow_organizer:task-detail' pk=task.id %}">{{ task.name }}</a>
+                                    </div>
+                                  </td>
+                                  <td style="border-radius:10px;" class="text-center align-middle">
+                                    <div class="col-12">
+                                      <span class="far fa-calendar-alt text-muted">  {{ task.time_constraints }}</span>
+                                    </div>
+                                  </td>
+                                  <td style="width:150px; border-radius:10px;" class="align-middle">
+                                    {% if task.priority in "U" %}
+                                      <span style="width:140px" class="btn btn-secondary red">URGENT PRIORITY</span>
+                                    {% elif task.priority in "A" %}
+                                      <span style="width:140px" class="btn btn-secondary orange">AVERAGE PRIORITY</span>
+                                    {% elif task.priority in "S" %}
+                                      <span style="width:140px" class="btn btn-secondary green">SIDE-TRACKED TASK</span>
+                                    {% endif %}
+                                  </td>
+                                </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        {% endif %}
+                        {% if worker.finished_tasks %}
+                          <table style="width: 100%" class="table table-borderless">
+                            <thead>
+                              <tr class="p-0">
+                                <td style="border-radius:10px;" class="w200 p-0" scope="col">
+                                  <small class="btn btn-success h-6 px-2">COMPLETED</small>
+                                </td>
+                                <td class="text-center w100 p-0 py-2" scope="col">
+                                  <small class="text-muted">CO-WORKERS</small>
+                                </td>
+                                <td style="border-radius:10px;" class="text-center w100 p-0 py-2" scope="col">
+                                  <small class="text-muted">TIME CONSTRAINTS</small>
+                                </td>
+                                <td style="border-radius:10px;" class="text-center w50 p-0 py-2" scope="col">
+                                  <small class="text-muted">PRIORITY</small>
+                                </td>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for task in worker.finished_tasks.all %}
+                                {% if task.is_completed %}
+                                <tr class="border-bottom bg-white">
+                                  <td style="border-radius:10px;" class="align-middle">
+                                    <div style="width:300px" class="d-flex align-items-center">
+                                      <a class="link mx-3" href="{% url 'workflow_organizer:task-detail' pk=task.id %}">{{ task.name }}</a>
+                                    </div>
+                                  </td>
+                                  <td style="border-radius:10px;" class="text-center align-middle">
+                                    <div class="col-12">
+                                      <span class="far fa-calendar-alt text-muted">  {{ task.time_constraints }}</span>
+                                    </div>
+                                  </td>
+                                  <td style="width:150px; border-radius:10px;" class="align-middle">
+                                    {% if task.priority in "U" %}
+                                      <span style="width:140px" class="btn btn-secondary red">URGENT PRIORITY</span>
+                                    {% elif task.priority in "A" %}
+                                      <span style="width:140px" class="btn btn-secondary yellow">AVERAGE PRIORITY</span>
+                                    {% elif task.priority in "S" %}
+                                      <span style="width:140px" class="btn btn-secondary blue">SIDE-TRACKED TASK</span>
+                                    {% endif %}
+                                  </td>
+                                </tr>
+                                {% endif %}
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% else %}
+                    <p class="text-lg mb-0">There is no activity yet!</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+{% endblock content %}

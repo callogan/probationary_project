@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Tracking System</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .panel {
+            width: 48%;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .top-left {
+            order: 1;
+        }
+
+        .top-right {
+            order: 2;
+        }
+
+        .bottom-left {
+            order: 3;
+        }
+
+        .bottom-right {
+            order: 4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="panel top-left">
+            <h2>Ultimate Information</h2>
+            <p>Total project's number: {{ total_projects|length }}</p>
+            <p>Number of completed projects: {{ completed_projects|length}}</p>
+        </div>
+
+        <div class="panel top-right">
+            <h2>Progress</h2>
+            <ul>
+                {% for project in total_projects %}
+                    <li>{{ project.name }}: {{ project.progress }}%</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="panel bottom-left">
+            <h2>Time Constraints</h2>
+            <ul>
+                {% for project in total_projects %}
+                    <li>{{ project.name }}: {{ project.time_constraints }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="panel bottom-right">
+            <h2>Funds</h2>
+            <ul>
+                {% for project in total_projects %}
+                    <li>{{ project.name }}: ${{ project.budget }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
