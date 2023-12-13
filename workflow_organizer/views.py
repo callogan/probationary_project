@@ -326,6 +326,9 @@ class TeamDelete(LoginRequiredMixin, generic.DeleteView):
     model = Team
     success_url = reverse_lazy("workflow_organizer:dashboard")
 
+    class Meta:
+        fields = "__all__"
+
 
 @login_required
 def toggle_add_to_team(request, pk):
